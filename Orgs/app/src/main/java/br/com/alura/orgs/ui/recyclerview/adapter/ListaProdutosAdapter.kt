@@ -2,27 +2,30 @@ package br.com.alura.orgs.ui.recyclerview.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
+import br.com.alura.orgs.R
 import br.com.alura.orgs.databinding.ProdutoItemBinding
 import br.com.alura.orgs.extensions.formataParaMoedaBrasileira
 import br.com.alura.orgs.extensions.tentaCarregarImagem
 import br.com.alura.orgs.model.Produto
-import java.math.BigDecimal
-import java.text.NumberFormat
-import java.util.*
 
 class ListaProdutosAdapter(
-        private val context: Context,
-        produtos: List<Produto>,
-        var quandoClicaNoItemListener:(produto: Produto) -> Unit = {}
+    private val context: Context,
+    produtos: List<Produto> = emptyList(),
+    var quandoClicaNoItemListener:(produto: Produto) -> Unit = {},
+    var quandoClicaEmRemover: (produtos: Produto) -> Unit = {},
+    var quandoClicaEmEditar: (produtos: Produto) -> Unit = {}
 ) : RecyclerView.Adapter<ListaProdutosAdapter.ViewHolder>() {
 
     private val produtos = produtos.toMutableList()
 
     inner class ViewHolder(private val binding:ProdutoItemBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+        RecyclerView.ViewHolder(binding.root), PopupMenu.OnMenuItemClickListener {
 
         private lateinit var produto: Produto
 
@@ -30,8 +33,14 @@ class ListaProdutosAdapter(
             itemView.setOnClickListener {
                 if (::produto.isInitialized) {
                     quandoClicaNoItemListener(produto)
-
                 }
+            }
+
+            itemView.setOnLongClickListener{
+                if (::produto.isInitialized) {
+                    showPopup(it)
+                }
+                true
             }
         }
 
@@ -58,6 +67,26 @@ class ListaProdutosAdapter(
 
         }
 
+        fun showPopup(v: View) {
+            PopupMenu(context, v).apply {
+                setOnMenuItemClickListener(this@ViewHolder)
+                inflate(R.menu.menu_detalhes_produto)
+                show()
+            }
+        }
+        override fun onMenuItemClick(item: MenuItem?): Boolean {
+            return when (item?.itemId) {
+                R.id.menu_detalhes_produto_editar -> {
+                    quandoClicaEmEditar(produto)
+                    true
+                }
+                R.id.menu_detalhes_produto_remover -> {
+                    quandoClicaEmRemover(produto)
+                    true
+                }
+                else -> false
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -69,6 +98,7 @@ class ListaProdutosAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val produto = produtos[position]
         holder.vincula(produto)
+
     }
 
     override fun getItemCount(): Int = produtos.size
@@ -78,7 +108,4 @@ class ListaProdutosAdapter(
         this.produtos.addAll(produtos)
         notifyDataSetChanged()
     }
-
-
-
 }

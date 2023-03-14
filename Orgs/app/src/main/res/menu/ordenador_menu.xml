@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/ordenador_menu_nome_AZ"
+        android:title="Nome A-Z" />
+    <item
+        android:id="@+id/ordenador_menu_nome_ZA"
+        android:title="Nome Z-A" />
+    <item
+        android:id="@+id/ordenador_menu_descricao_AZ"
+        android:title="Descrição A-Z" />
+    <item
+        android:id="@+id/ordenador_menu_descricao_ZA"
+        android:title="Descrição Z-A" />
+    <item
+        android:id="@+id/ordenador_menu_valor_asce"
+        android:title="Valor - +" />
+    <item
+        android:id="@+id/ordenador_menu_valor_desc"
+        android:title="Valor + -" />
+    <item
+        android:id="@+id/ordenador_menu_desordenado"
+        android:title="Desordenado" />
+</menu>
